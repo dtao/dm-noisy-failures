@@ -2,11 +2,8 @@ source :rubygems
 
 gem "data_mapper"
 
-group :development do
+group :test do
   gem "dm-sqlite-adapter"
   gem "rake"
-end
-
-group :test do
   gem "rspec"
 end
