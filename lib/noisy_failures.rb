@@ -5,13 +5,15 @@ module DataMapper
 
     def save
       unless self.save?
-        raise self.errors.map { |e| "#{self.class}: #{e.join(', ')}" }.join("\n")
+        error_message = self.errors.map { |e| "#{self.class}: #{e.join(', ')}" }.join("\n")
+        raise SaveFailureError.new(error_message, self)
       end
     end
 
     def destroy
       unless self.destroy?
-        raise "#{self.class}: Unable to destroy, probably due to associated records."
+        error_message = "#{self.class}: Unable to destroy, probably due to associated records."
+        raise SaveFailureError.new(error_message, self)
       end
     end
 
