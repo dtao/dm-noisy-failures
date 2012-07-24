@@ -17,6 +17,6 @@ class Membership
   property :type,      String, :required => true
 end
 
-DataMapper.setup(:default, "sqlite3://" + File.join(File.dirname(__FILE__), "..", "db", "test.db"))
+DataMapper.setup(:default, "sqlite3://" + File.join(File.dirname(__FILE__), "test.db"))
 DataMapper.finalize
 DataMapper.auto_migrate!
