@@ -23,5 +23,28 @@ module DataMapper
     rescue => e
       false
     end
+
+    def self.included(base)
+      def base.create?(*args)
+        self.create(*args)
+      rescue => e
+        nil
+      end
+    end
+
+    # If any library authors have overridden this, we're screwed.
+    # TODO: Figure out if it's possible to detect that case.
+    original_include_method = Class.instance_method(:include?)
+
+    # TODO: Maybe look into not just duplicating the above code here?
+    ObjectSpace.each_object(Class).each do |existing_class|
+      if original_include_method.bind(existing_class).call(Resource)
+        def existing_class.create?(*args)
+          self.create(*args)
+        rescue => e
+          nil
+        end
+      end
+    end
   end
 end

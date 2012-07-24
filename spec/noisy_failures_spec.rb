@@ -21,14 +21,6 @@ describe DataMapper::Resource do
     @person = Person.new
   end
 
-  describe "#create" do
-    it "raises an exception with a descriptive error message when a resource cannot be created" do
-      exception_from {
-        Person.create
-      }.should =~ /name.*blank/i
-    end
-  end
-
   describe "#save" do
     it "raises an exception with a descriptive error message when a resource cannot be saved" do
       exception_from {
@@ -63,6 +55,21 @@ describe DataMapper::Resource do
       @person.save?.should be_true
       @person.name = nil
       @person.save?.should be_false
+    end
+  end
+
+  describe "#create" do
+    it "raises an exception on failure, same as #save" do
+      exception_from {
+        Person.create
+      }.should =~ /name.*blank/i
+    end
+  end
+
+  describe "#create?" do
+    it "returns an instance or nil depending on whether the record was saved successfully or not" do
+      Person.create?.should be_nil
+      Person.create?(:name => "Joe Schmoe").should be_a(Person)
     end
   end
 
