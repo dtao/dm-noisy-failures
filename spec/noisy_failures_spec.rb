@@ -49,6 +49,12 @@ describe DataMapper::Resource do
         @person.save
       }.should =~ /Membership.*type.*blank/i
     end
+
+    it "includes each relevant error message in the even there are multiple" do
+      exception_from {
+        Address.create
+      }.should =~ /address.*blank.*city.*blank.*state.*blank.*zipcode.*blank/im
+    end
   end
 
   describe "#save?" do

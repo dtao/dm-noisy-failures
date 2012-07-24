@@ -5,7 +5,7 @@ module DataMapper
 
     def save
       unless self.save?
-        raise "#{self.class}: #{self.errors.map { |e| e.join("\n") }.join("\n---\n")}"
+        raise self.errors.map { |e| "#{self.class}: #{e.join(', ')}" }.join("\n")
       end
     end
 

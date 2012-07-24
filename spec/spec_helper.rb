@@ -17,6 +17,15 @@ class Membership
   property :type,      String, :required => true
 end
 
+class Address
+  include DataMapper::Resource
+  property :id, Serial
+  property :street_address, String,  :required => true
+  property :city,           String,  :required => true
+  property :state,          String,  :required => true
+  property :zipcode,        Integer, :required => true
+end
+
 DataMapper.setup(:default, "sqlite3://" + File.join(File.dirname(__FILE__), "test.db"))
 DataMapper.finalize
 DataMapper.auto_migrate!
