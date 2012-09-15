@@ -1,1 +1,1 @@
-require "./data_mapper/resource"
+require "data_mapper/resource"
