@@ -10,8 +10,8 @@ Gem::Specification.new do |s|
   s.summary     = "Noisy (and descriptive) failures for DataMapper"
 
   s.description = <<-DESCRIPTION.gsub(/^\s+/, "")
-    This library replaces the default behavior of DataMapper by raising exceptions *with
-    descriptive error messages* whenever DB operations are not successfully completed.
+    This library replaces the default behavior of DataMapper by raising exceptions with
+    descriptive error messages whenever DB operations are not successfully completed.
   DESCRIPTION
 
   s.add_dependency "data_mapper"
