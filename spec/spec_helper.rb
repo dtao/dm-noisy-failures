@@ -2,6 +2,8 @@ require "data_mapper"
 
 $LOAD_PATH << File.join(File.dirname(__FILE__), "..", "lib")
 
+require "dm_noisy_failures"
+
 class Person
   include DataMapper::Resource
   has n, :memberships
