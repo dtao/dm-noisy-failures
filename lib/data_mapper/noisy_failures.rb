@@ -5,7 +5,8 @@ module DataMapper
 
     def save
       unless self.save?
-        error_message = self.errors.map { |e| "#{self.class}: #{e.join(', ')}" }.join("\n")
+        return if self.errors.empty?
+        error_message = self.errors.map { |e| "#{self.class}: #{e.join(', ')}" }.join("; ")
         raise SaveFailureError.new(error_message, self)
       end
     end

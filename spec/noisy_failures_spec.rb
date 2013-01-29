@@ -40,10 +40,19 @@ describe DataMapper::Resource do
       }.should =~ /Membership.*type.*blank/i
     end
 
-    it "includes each relevant error message in the even there are multiple" do
+    it "includes each relevant error message in the event there are multiple" do
       exception_from {
         Address.create
       }.should =~ /address.*blank.*city.*blank.*state.*blank.*zipcode.*blank/im
+    end
+
+    it "does not erroneously raise an error when all records are properly saved (even if #save? returned false)" do
+      @person.name = "Joe Schmoe"
+      @person.memberships << Membership.new
+      @person.memberships.first.type = "gym"
+      @person.save
+      @person.saved?.should be_true
+      @person.memberships.first.saved?.should be_true
     end
   end
 
