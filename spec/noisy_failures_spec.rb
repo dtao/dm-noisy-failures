@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), "spec_helper")
 
-require "noisy_failures"
+require "dm_noisy_failures"
 
 def exception_from(&block)
   exception = nil

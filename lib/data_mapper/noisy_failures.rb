@@ -24,7 +24,14 @@ module DataMapper
       false
     end
 
+    original_included_method = nil
+    if self.respond_to?(:included)
+      original_included_method = self.instance_method(:included)
+    end
+
     def self.included(base)
+      original_included_method.bind(self).call(base) unless original_included_method.nil?
+
       def base.create?(*args)
         self.create(*args)
       rescue => e
