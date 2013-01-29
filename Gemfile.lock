@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    dm-noisy-failures (0.2.1)
+      data_mapper
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -72,7 +78,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  data_mapper
+  dm-noisy-failures!
   dm-sqlite-adapter
   rake
   rspec

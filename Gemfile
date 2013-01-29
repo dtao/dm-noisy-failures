@@ -1,6 +1,6 @@
 source :rubygems
 
-gem "data_mapper"
+gemspec
 
 group :test do
   gem "dm-sqlite-adapter"
