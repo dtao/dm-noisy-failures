@@ -1,7 +1,7 @@
 DataMapper: Noisy Failures
 ==========================
 
-[Some have argued](http://www.drmaciver.com/2010/04/datamapper-is-inherently-broken/), that there is fundamental flaw in [DataMapper](http://datamapper.org/): that it "considers booleans to be a superior solution to exceptions." That is, the library does not actively tell you what went wrong when you try to save a record and it fails.
+[Some have argued](http://www.drmaciver.com/2010/04/datamapper-is-inherently-broken/) that there is fundamental flaw in [DataMapper](http://datamapper.org/): that it "considers booleans to be a superior solution to exceptions." That is, the library does not actively tell you what went wrong when you try to save a record and it fails.
 
 Simple Example
 --------------
@@ -31,15 +31,15 @@ p.save # => DataMapper::SaveFailureError: Person: Name must not be blank
 
 There, isn't that better?
 
-Slightly Less Simple Example
-----------------------------
+Slightly More Complex Example
+-----------------------------
 
 The [DataMapper documentation](http://datamapper.org/docs/validations.html) suggests a way to do something similar to the above:
 
 ```ruby
 def save_record(record)
   if record.save
-    puts "Saved record."
+    # The record saved successfully.
   else
     puts "Errors:"
     record.errors.each do |e|
@@ -49,7 +49,7 @@ def save_record(record)
 end
 ```
 
-This works just fine for the simple example above. But what if we spice things up a bit?
+This works just fine for the simple example above. But what if we change things up a bit?
 
 ```ruby
 class Person
@@ -97,3 +97,8 @@ This means that for each operation, there are three options to choose from:
 - `save?` (the old default): return true or false
 - `save` (the new default): throw exceptions on failure
 - `save!` (already part of DataMapper): save without validating
+
+Requirements
+------------
+
+This library's only dependency is DataMapper itself. Note that you should require `dm-noisy-failures` before defining any of your models.
