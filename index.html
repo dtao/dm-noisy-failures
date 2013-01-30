@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>dm-noisy-failures by dtao</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>dm-noisy-failures</h1>
+        <h2>Noisy (and descriptive) failures for DataMapper</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/dtao/dm-noisy-failures/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/dtao/dm-noisy-failures/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/dtao/dm-noisy-failures" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>DataMapper: Noisy Failures</h1>
+
+<p><a href="http://www.drmaciver.com/2010/04/datamapper-is-inherently-broken/">Some have argued</a> that there is fundamental flaw in <a href="http://datamapper.org/">DataMapper</a>: that it "considers booleans to be a superior solution to exceptions." That is, the library does not actively tell you what went wrong when you try to save a record and it fails.</p>
+
+<h2>Simple Example</h2>
+
+<p>Consider this simple example:</p>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Person</span>
+  <span class="kp">include</span> <span class="no">DataMapper</span><span class="o">::</span><span class="no">Resource</span>
+
+  <span class="n">property</span> <span class="ss">:id</span><span class="p">,</span>   <span class="no">Serial</span>
+  <span class="n">property</span> <span class="ss">:name</span><span class="p">,</span> <span class="nb">String</span><span class="p">,</span> <span class="ss">:required</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+<span class="k">end</span>
+
+<span class="nb">p</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class="n">new</span>
+<span class="nb">p</span><span class="o">.</span><span class="n">save</span> <span class="c1"># =&gt; false</span>
+</pre></div>
+
+<p>Compare this to the behavior you get after requiring <code>dm-noisy-failures</code>:</p>
+
+<div class="highlight"><pre><span class="nb">require</span> <span class="s2">"dm_noisy_failures"</span> <span class="c1"># or dm-noisy-failures</span>
+
+<span class="nb">p</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class="n">new</span>
+<span class="nb">p</span><span class="o">.</span><span class="n">save</span> <span class="c1"># =&gt; DataMapper::SaveFailureError: Person: Name must not be blank</span>
+</pre></div>
+
+<p>There, isn't that better?</p>
+
+<h2>Slightly More Complex Example</h2>
+
+<p>The <a href="http://datamapper.org/docs/validations.html">DataMapper documentation</a> suggests a way to do something similar to the above:</p>
+
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">save_record</span><span class="p">(</span><span class="n">record</span><span class="p">)</span>
+  <span class="k">if</span> <span class="n">record</span><span class="o">.</span><span class="n">save</span>
+    <span class="c1"># The record saved successfully.</span>
+  <span class="k">else</span>
+    <span class="nb">puts</span> <span class="s2">"Errors:"</span>
+    <span class="n">record</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">each</span> <span class="k">do</span> <span class="o">|</span><span class="n">e</span><span class="o">|</span>
+      <span class="nb">puts</span> <span class="n">e</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
+<p>This works just fine for the simple example above. But what if we change things up a bit?</p>
+
+<div class="highlight"><pre><span class="k">class</span> <span class="nc">Person</span>
+  <span class="n">has</span> <span class="n">n</span><span class="p">,</span> <span class="ss">:accounts</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Account</span>
+  <span class="kp">include</span> <span class="no">DataMapper</span><span class="o">::</span><span class="no">Resource</span>
+
+  <span class="n">belongs_to</span> <span class="ss">:person</span>
+
+  <span class="n">property</span> <span class="ss">:id</span><span class="p">,</span>        <span class="no">Serial</span>
+  <span class="n">property</span> <span class="ss">:person_id</span><span class="p">,</span> <span class="nb">Integer</span>
+  <span class="n">property</span> <span class="ss">:name</span><span class="p">,</span>      <span class="nb">String</span><span class="p">,</span> <span class="ss">:required</span> <span class="o">=&gt;</span> <span class="kp">true</span>
+<span class="k">end</span>
+
+<span class="nb">p</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"John"</span><span class="p">)</span>
+<span class="nb">p</span><span class="o">.</span><span class="n">accounts</span> <span class="o">&lt;&lt;</span> <span class="no">Account</span><span class="o">.</span><span class="n">new</span>
+<span class="n">save_record</span><span class="p">(</span><span class="nb">p</span><span class="p">)</span> <span class="c1"># =&gt; Errors:</span>
+</pre></div>
+
+<p>What happened? Why don't we see any errors? Because the record passed to <code>save_record</code> doesn't <em>have</em> any; it's the child record that has the errors.</p>
+
+<p>Now, let's try that again with <code>dm-noisy-failures</code> required:</p>
+
+<div class="highlight"><pre><span class="nb">require</span> <span class="s2">"dm_noisy_failures"</span>
+
+<span class="nb">p</span> <span class="o">=</span> <span class="no">Person</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="ss">:name</span> <span class="o">=&gt;</span> <span class="s2">"John"</span><span class="p">)</span>
+<span class="nb">p</span><span class="o">.</span><span class="n">accounts</span> <span class="o">&lt;&lt;</span> <span class="no">Account</span><span class="o">.</span><span class="n">new</span>
+<span class="n">save_record</span><span class="p">(</span><span class="nb">p</span><span class="p">)</span> <span class="c1"># =&gt; DataMapper::SaveFailureError: Account: Name must not be blank</span>
+</pre></div>
+
+<p>Awesome! Right?</p>
+
+<h2>Methods Affected</h2>
+
+<p>This gem aliases the default DataMapper methods <code>save</code>, <code>update</code>, <code>create</code>, and <code>destroy</code> with <code>?</code> equivalents (<code>save?</code>, etc.) which return true or false. The one exception is <code>create?</code>, which returns either a resource object or nil.</p>
+
+<p>All four methods are then <em>replaced</em> with variations that throw exceptions with informative error messages.</p>
+
+<p>This means that for each operation, there are three options to choose from:</p>
+
+<ul>
+<li>
+<code>save?</code> (the old default): return true or false</li>
+<li>
+<code>save</code> (the new default): throw exceptions on failure</li>
+<li>
+<code>save!</code> (already part of DataMapper): save without validating</li>
+</ul><h2>Requirements</h2>
+
+<p>This library's only dependency is DataMapper itself. Note that you should require <code>dm-noisy-failures</code> before defining any of your models.</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
