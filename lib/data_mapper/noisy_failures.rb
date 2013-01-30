@@ -4,24 +4,24 @@ module DataMapper
     alias_method :destroy?, :destroy
 
     def save
-      unless self.save?
-        return if self.errors.empty?
-        error_message = self.errors.map { |e| "#{self.class}: #{e.join(', ')}" }.join("; ")
-        raise SaveFailureError.new(error_message, self)
-      end
+      return if self.save? || self.errors.empty?
+      error_message = self.errors.map { |e| "#{self.class}: #{e.join(', ')}" }.join("; ")
+      raise SaveFailureError.new(error_message, self)
     end
 
     def destroy
-      unless self.destroy?
-        error_message = "#{self.class}: Unable to destroy, probably due to associated records."
-        raise SaveFailureError.new(error_message, self)
-      end
+      return if self.destroy?
+      error_message = "#{self.class}: Unable to destroy, probably due to associated records."
+      raise SaveFailureError.new(error_message, self)
     end
 
     def update?(*args)
       self.update(*args)
       true
     rescue => e
+      # This seems like the cleanest way of doing this. #update calls #save internally, so we can't
+      # use alias_method because then #update? would call #save, which would raise an exception now
+      # that we've done our monkey-patching.
       false
     end
 
