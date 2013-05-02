@@ -4,13 +4,13 @@ module DataMapper
     alias_method :destroy?, :destroy
 
     def save
-      return if self.save? || self.errors.empty?
+      return true if self.save? || self.errors.empty?
       error_message = self.errors.map { |e| "#{self.class}: #{e.join(', ')}" }.join("; ")
       raise SaveFailureError.new(error_message, self)
     end
 
     def destroy
-      return if self.destroy?
+      return true if self.destroy?
       error_message = "#{self.class}: Unable to destroy, probably due to associated records."
       raise SaveFailureError.new(error_message, self)
     end

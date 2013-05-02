@@ -5,6 +5,8 @@ require "dm_noisy_failures"
 class Person
   include DataMapper::Resource
   has n, :memberships
+  has n, :friends, "Person", :through => Resource
+
   property :id,    Serial
   property :name,  String, :required => true
 end

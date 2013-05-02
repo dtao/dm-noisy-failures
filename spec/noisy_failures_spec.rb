@@ -17,6 +17,7 @@ end
 describe DataMapper::Resource do
   before :each do
     @person = Person.new
+    @friend = Person.new
   end
 
   describe "#save" do
@@ -53,6 +54,15 @@ describe DataMapper::Resource do
       @person.save
       @person.saved?.should be_true
       @person.memberships.first.saved?.should be_true
+    end
+
+    it "does not block the creation of many-to-many associations" do
+      @person.name = "Sally Social"
+      @person.friends << Person.create(:name => "Freddy")
+      @person.friends << Person.create(:name => "Fannie")
+      @person.save
+      @person.reload
+      @person.friends.map(&:name).should =~ ["Freddy", "Fannie"]
     end
   end
 
