@@ -4,7 +4,7 @@ module DataMapper
     alias_method :destroy?, :destroy
 
     def save
-      return true if self.save? || self.errors.empty?
+      return true if self.save? && self.errors.empty?
       error_message = self.errors.map { |e| "#{self.class}: #{e.join(', ')}" }.join("; ")
       raise SaveFailureError.new(error_message, self)
     end

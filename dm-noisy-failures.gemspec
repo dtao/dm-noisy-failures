@@ -14,6 +14,8 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
 
   s.add_dependency "data_mapper"
+  s.add_dependency "dm-core"
+  s.add_dependency "dm-validations"
   s.files        = Dir["{lib}/**/*.rb"]
   s.require_path = "lib"
 end
